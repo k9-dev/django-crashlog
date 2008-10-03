@@ -14,7 +14,10 @@ class CrashLogMiddleware(object):
 
         defaults = dict(
             class_name  = class_name,
-            message     = exception.message,
+            # Python 2.5 changed Exception classes to inherit from
+            # BaseException which guarantees .message is available, return an
+            # empty string if it is not there (aka 2.3 and 2.4)
+            message     = getattr(exception, "message", ""),
             url         = request.build_absolute_uri(),
             server_name = server_name,
             traceback   = tb_text,
